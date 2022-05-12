@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import '/main.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -31,6 +35,48 @@ class _HomePageState extends State<HomePage> {
                   _showToast();
                 },
                 child: const Text('btn')),
+            const Center(child: Text('hi')),
+            ElevatedButton(
+                onPressed: () async {
+                  final notification = flutterLocalNotificationsPlugin;
+
+                  const android = AndroidNotificationDetails(
+                    '0',
+                    '알림테스트',
+                    channelDescription: '알림 테스트 바디 부분',
+                    importance: Importance.max,
+                    priority: Priority.max,
+                  );
+                  const ios = IOSNotificationDetails();
+
+                  final detail = NotificationDetails(
+                    android: android,
+                    iOS: ios,
+                  );
+
+                  final permission = Platform.isAndroid
+                      ? true
+                      : await notification
+                              .resolvePlatformSpecificImplementation<
+                                  IOSFlutterLocalNotificationsPlugin>()
+                              ?.requestPermissions(
+                                  alert: true, badge: true, sound: true) ??
+                          false;
+
+                  print('permission $permission');
+
+                  if (permission) {
+                    await flutterLocalNotificationsPlugin.show(
+                      0,
+                      'plain title',
+                      'plain body',
+                      detail,
+                    );
+                  } else {
+                    return;
+                  }
+                },
+                child: const Text('add alarm')),
             const Center(child: Text('hi'))
           ],
         ));
