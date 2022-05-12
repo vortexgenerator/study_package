@@ -37,6 +37,7 @@ dependencies:
   flutter_local_notifications: ^9.5.2
   timezone: ^0.8.0
   flutter_native_timezone: ^2.0.0
+  image_picker: ^0.8.5+2
 
 dev_dependencies:
   flutter_test:
