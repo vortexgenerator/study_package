@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 import '/main.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,6 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late FToast fToast;
+  int alarmtime = 0;
 
   @override
   void initState() {
@@ -36,6 +39,12 @@ class _HomePageState extends State<HomePage> {
                 },
                 child: const Text('btn')),
             const Center(child: Text('hi')),
+            TextField(
+                decoration: InputDecoration(hintText: "분을 입력하세요."),
+                onChanged: (text) {
+                  alarmtime = int.parse(text);
+                  print(alarmtime);
+                }),
             ElevatedButton(
                 onPressed: () async {
                   final notification = flutterLocalNotificationsPlugin;
@@ -65,13 +74,34 @@ class _HomePageState extends State<HomePage> {
 
                   print('permission $permission');
 
+// 타임존 셋팅 필요
+                  final now = tz.TZDateTime.now(tz.local);
+                  var notiDay = now.day;
+
                   if (permission) {
-                    await flutterLocalNotificationsPlugin.show(
-                      0,
-                      'plain title',
-                      'plain body',
-                      detail,
-                    );
+                    await notification.zonedSchedule(
+                        1,
+                        'alarmTitle',
+                        'alarmDescription',
+                        tz.TZDateTime(
+                          tz.local,
+                          now.year,
+                          now.month,
+                          now.day,
+                          now.hour,
+                          alarmtime,
+                        ),
+                        detail,
+                        androidAllowWhileIdle: true,
+                        uiLocalNotificationDateInterpretation:
+                            UILocalNotificationDateInterpretation.absoluteTime,
+                        matchDateTimeComponents: DateTimeComponents.time);
+                    // await flutterLocalNotificationsPlugin.show(
+                    //   0,
+                    //   'plain title',
+                    //   'plain body',
+                    //   detail,
+                    // );
                   } else {
                     return;
                   }
