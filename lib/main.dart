@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:study_package/model/inputForm.dart';
 import 'package:study_package/page/home_page.dart';
 import 'package:study_package/page/image_page.dart';
 import 'package:study_package/page/user_list_page.dart';
@@ -18,7 +19,9 @@ void main() async {
 
 Future<void> _initHive() async {
   await Hive.initFlutter();
+  Hive.registerAdapter(InputFormAdapter());
   await Hive.openBox('darkModeBox');
+  await Hive.openBox<InputForm>('InputFormBox');
 }
 
 final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
